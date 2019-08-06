@@ -11,5 +11,6 @@ steam bot api，auto trade csgo dota2 skins
 - 取消交易
 - 报价状态回调
 
-如果您有调用的需要，欢迎联系我们。
+[详细的文档说明](https://github.com/SteamDevelop/SteamTradeBotAPI/blob/master/%E6%8E%A5%E5%8F%A3%E6%96%87%E6%A1%A3.md)
+<br>如果您有调用的需要，欢迎联系我们。
 ### Email：haidaohaibot@gmail.com
