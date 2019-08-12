@@ -1,6 +1,21 @@
 # SteamTradeBotAPI
 steam bot api，auto trade csgo dota2 skins
 
+## The API list:
+- Steam robot status inquiry
+- Control Steam robot on line and off line.
+- Initiate trading API
+- Transaction status inquiry
+- Cancel the deal
+- Quote status callback
+
+[detailed documentation]
+<br>If you have any requirements or questions, please feel free to contact us.
+### Email：haidaohaibot@gmail.com
+
+
+
+# Steam交易机器人接口
 我们对外提供接口，通过接口可以调用Steam皮肤交易服务，完成Steam皮肤自动化交易。
 
 ## 接口列表如下：
