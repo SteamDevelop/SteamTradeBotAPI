@@ -9,7 +9,7 @@ steam bot api，auto trade csgo dota2 skins
 - Cancel the deal
 - Quote status callback
 
-[detailed documentation]
+[detailed documentation](https://github.com/SteamDevelop/SteamTradeBotAPI/blob/master/API.md)
 <br>If you have any requirements or questions, please feel free to contact us.
 ### Email：haidaohaibot@gmail.com
 
