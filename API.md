@@ -64,42 +64,42 @@ API response
   "message": "xxxxx"
 }
 ```
-机器人上下线指令为异步操作，一般需要一些时间完成登录/注销的上下线操作；
-所以发送完成上述交互指令后，请过10秒钟后再调用查询机器人状态的api查询机器人的最新状态
+The robot's login and logout commands are asynchronous operations, it usually takes some time to complete the operation.
+So after sending the above interactive command, please wait 10 seconds before call the api of robot status inquiry.
 
 
-### 发起交易接口
+### Transaction API
 ```
 POST http://bot.5uskin.com/api/steambot/trade/
 ```
-接口参数包体:
+API parameter inclusions:
 ```json
 {
-  "steamid": "705xxxxx", // 发起交易的机器人steamid
+  "steamid": "705xxxxx", // Steamid of robot that initiate a transaction
   "my_items": [
-    // 要交易的我方饰品列表，如果交易我方，则留空数组
+    // List of robot's skins to be traded, if robot is the traded one, leave a blank array
     {
-      "appid": 570, // 饰品的appid
-      "contextid": "2", // 饰品的contextid
-      "assetid": "15680233392" // 饰品的assetid
+      "appid": 570, // skin's appid
+      "contextid": "2", // skin's contextid
+      "assetid": "15680233392" // skin's assetid
     }
   ],
   "their_items": [
-    // 要交易的对方饰品列表，如果不请求对方饰品，则留空数组
+    // List of transaction party's skins to be traded, if do not request the party's skins, leave a blank array
     {
-      "appid": 570, // 饰品的appid
-      "contextid": "2", // 饰品的contextid
-      "assetid": "15680235255" // 饰品的assetid
+      "appid": 570, // skin's appid
+      "contextid": "2", // skin's contextid
+      "assetid": "15680235255" // skin's assetid
     }
   ], 
-  "tradeurl": "https://steamcommunity.com/tradeoffer/new/?partner=81xxxxxx&token=tOxxxxxx", // 对方的steam报价链接
-  "cancel_time": 600000, // 订单取消时长，单位毫秒；报价发起后超过该时长后，机器人自动取消报价
-  "message": "my trade offer", // steam报价单附带的报价描述信息,
-  "uid": "xxxxxxxxxxxxx", // 该笔报价的唯一uuid，报价发起成功后，可以用该uuid查询报价状态
+  "tradeurl": "https://steamcommunity.com/tradeoffer/new/?partner=81xxxxxx&token=tOxxxxxx", // The transaction party's steam quote link
+  "cancel_time": 600000, // The order cancellation time in milliseconds; after the quote is initiated, the robot automatically cancels the quote after the duration
+  "message": "my trade offer", // Quote description information attached to the steam quotation,
+  "uid": "xxxxxxxxxxxxx", // The only uuid of the quote, after the quote is successfully launched, this uuid can be use to query the quote status.
 }
 ```
 
-接口响应
+API response
 ```json
 {
   "code": 0,
@@ -110,40 +110,39 @@ POST http://bot.5uskin.com/api/steambot/trade/
 }
 ```
 
-### 查询交易状态
+### Steam transaction status inquiry
 ```
 GET http://bot.5uskin.com/api/steambot/trade/
 ```
-接口参数：
-参数名 | 参数值 | 必需 | 说明
+API parameters:
+Parameter name | Parameter value | Required | Description
 ----- | ----- | ----- | -----
-uid | xxxxxxxx | 是 | 要查询的报价uuid
+uid | xxxxxxxx | Yes | The uuid to be queried
 
-##### 机器人报价单状态
-状态值 | 描述
+##### Robot's quotation status
+Status value | Description
 ----- | -----
-0 | 机器人正在排队处理中
-1 | 交易成功
-2 | 报价已失败(取消报价也是报价失败
-11 | 机器人提交报价中
-12 | 报价发起成功，已经从steam获取到steam报价单号
-13 | 机器人报价发起完毕，报价单激活中，等待客户接收报价
-14 | 报价单暂挂
+0 | The robot is queued for processing
+1 | Successful transaction
+2 | Failed quotation, cancellation of quote is also a quote failure
+11 | Robot is submitting the quotation
+12 | The quotation was successfully launched and the steam quotation number has been obtained from steam.
+13 | The quotation of the robot is completed, the quotation is activated, and the customer is waiting for the quotation.
+14 | Quotation is pending
 
-##### 报价单在Steam平台状态
-状态值 | 状态 | 备注 | 场景补充
+##### The quotation status on Steam
+Status value | Status | Remarks | Scene supplement
 ----- | ----- | ---- | ----
-1 | 无效报价 | 该状态下，机器人归类为报价失败，会更新机器人的报价单状态为2 | 
-2 | 报价激活中，等待接受报价 | 该状态下，机器人即会更新机器人的报价单状态为 13 |
-3 | 报价已接受 |  该状态下，机器人归类为报价成功，会更新机器人的报价单状态为1 |
-4 | 报价被还价 |  该状态下，机器人归类为报价失败，会更新机器人的报价单状态为2；|  该场景下，原报价单会被取消，根据客户的还价会产生一个新的报价单（与原报价单单号不同），机器人会忽略新的报价单；例如 机器人报价单#123请求用户A的 item1,item2物品，用户A在接收到报价单#123后，点击报价单，操作还价，去掉了#123中的item1，这时#123报价单会被取消，并产生一笔新的报价单 #124，该报价单中为只请求交易item2；机器人将忽略#124报价单
-5 | 报价已过期 | 该状态下，机器人归类为报价失败，会更新机器人的报价单状态为2 |
-6 | 报价已取消 | 该状态下，机器人归类为报价失败，会更新机器人的报价单状态为2 |
-7 | 报价被拒绝 | 该状态下，机器人归类为报价失败，会更新机器人的报价单状态为2 |
-8 | 报价单物品无效 | 该状态下，机器人归类为报价失败，会更新机器人的报价单状态为2 | 例如：报价单#123请求了用户A的库存item1，item2，用户A暂未处理报价单#123，用户A与用户B进行另外一笔报价行为，将用户A的item1交易给了用户B，这时处于激活状态的报价单#123即会因为报价单物品无效而失败
-11 | 报价单交易暂挂 | 该状态下，机器人会更新机器人的报价单状态为14 | 由于暂挂交易需要等待15天，可能带来场景情况太多，我们建议是将暂挂都归类为报价交易失败
-
-接口响应
+1 | Invalid quote | In this state, the robot is classified as a quote failure, and the robot's quotation status is updated to 2 | 
+2 | Quote activation, waiting to accept quotes | In this state, the robot will update the robot's quotation status to 13 |
+3 | Quote has been accepted | In this state, the robot is classified as a successful quote, and the robot's quotation status is updated to 2 |
+4 | Quote is bargained | In this state, the robot is classified as a quote failure, and the robot's quotation status is updated to 2; |  In this status, the original quotation will be cancelled, a new quotation will be generated according to the customer's counter-offer (different from the original quotation number), and the robot will ignore the new quotation; for example, the robot give a quotation #123 requests the user A's Item1, item2, after receiving the quotation #123, user A click on the quotation, operate the counter-offer, remove the item1 in #123, then the #123 quotation will be canceled and a new quotation named #124 will be generated. In the quotation #124, only request item2 is requested; the robot will ignore the quotation #124.
+5 | Quote has expired | In this state, the robot is classified as a quote failure, and the robot's quotation status is updated to 2 |
+6 | Quote has been cancelled | In this state, the robot is classified as a quote failure, and the robot's quotation status is updated to 2 |
+7 | Quote is rejected | In this state, the robot is classified as a quote failure, and the robot's quotation status is updated to 2 |
+8 | Quotation item is invalid | In this state, the robot is classified as a quote failure, and the robot's quotation status is updated to 2 | For example, quotation #123 requests user A's inventory item1, item2, user A has not processed quotation #123, user A and user B perform another quotation behavior, and user A's item1 is traded to user B, which The quotation #123 that is active will fail because the quotation item is invalid.
+11 | Quotation is pending |In this state, the robot's quotation status is updated to 14 | Since the pending transaction needs to wait for 15 days and there are too many variables, we recommend that the suspension be classified as a quotation failure.
+API response
 ```json
 {
   "code": 0,
@@ -151,25 +150,25 @@ uid | xxxxxxxx | 是 | 要查询的报价uuid
     "uid": "xxxxxxxxxxxxx",
     "their_items": [
       {
-        "appid": 570, // 饰品的appid
-        "contextid": "2", // 饰品的contextid
-        "assetid": "15680235255", // 饰品的assetid
-        "new_assetid": "15680235256" // 交易成功后，该饰品的新assetid
+        "appid": 570, // skin's appid
+        "contextid": "2", // skin's contextid
+        "assetid": "15680235255", // skin's assetid
+        "new_assetid": "15680235256" // After the successful transaction, the new assetid of the skin
       }
     ],
     "my_items": [
       {
-        "appid": 570, // 饰品的appid
-        "contextid": "2", // 饰品的contextid
-        "assetid": "15680233392" // 饰品的assetid
+        "appid": 570, // skin's appid
+        "contextid": "2", // skin's contextid
+        "assetid": "15680233392" // skin's assetid
       }
     ],
     "updatedAt": "2019-04-15T10:02:38.495Z",
     "createdAt": "2019-04-15T10:02:07.693Z",
-    "trade_no": "3538xxxxxx", // 机器人报价发起成功后得到的steam报价单号
+    "trade_no": "3538xxxxxx", // The steam quotation number obtained after the robot quotation is successfully launched
     "exchanged": true,
-    "state": 1, // 机器人报价单状态；0表示机器人正在排队处理中，1表示报价交易成功，2表示报价已失败(取消报价也是报价失败)，11表示机器人提交报价中，12表示报价发起成功，已经从steam获取到steam报价单号，13表示机器人报价发起完毕，报价单激活中，等待客户接收报价；
-    "offer_state": 3, // 报价单在steam平台状态，状态信息参加上面的报价单Steam平台状态表格
+    "state": 1, // Robot's quotation status；0 means the robot is queued for processing，1 means successful transaction，2 means failed quotation, cancellation of quote is also a quote failure，11 means robot is submitting the quotation，12 means the quotation was successfully launched and the steam quotation number has been obtained from steam，13 means The quotation of the robot is completed, the quotation is activated, and the customer is waiting for the quotation；
+    "offer_state": 3, // The quotation status in Steam, the status information participates in the above quotation Steam Status Form
     "cancel_time": 600000,
     "tradeurl": "https://steamcommunity.com/tradeoffer/new/?partner=81xxxxxx&token=tOxxxxxx",
     "message": "my trade offer",
@@ -179,18 +178,18 @@ uid | xxxxxxxx | 是 | 要查询的报价uuid
 }
 ```
 
-### 取消交易
+### Cancel the transaction
 ```
 POST http://bot.5uskin.com/api/steambot/canceltrade/
 ```
-接口请求参数包体
+API request parameter inclusions
 ```json
 {
-  "uid": "xxxxxxx" // 要取消的报价单uuid
+  "uid": "xxxxxxx" // The uuid of cancelled quotation
 }
 ```
 
-接口响应
+API response
 ```json
 {
   "code": 0,
@@ -202,40 +201,39 @@ POST http://bot.5uskin.com/api/steambot/canceltrade/
 }
 ```
 
-### 报价状态回调
+### Quotation status callback
 ```
 POST http://www.yoursite.com/api/tradeoffer/callback/
 ```
-报价状态回调由机器人发起，向类似上面这样的你方回调地址回调订单状态变化信息
-
-回调包体
+The quotation status callback is initiated by the robot, the callback status change information is similar to the callback address
+Callback inclusion
 ```json
 {
-  "type": "tradeoffer",  // 回调类型，默认 tradeoffer，指代报价单
-  "action": "update", // 消息类型，默认 update，指代报价单状态更新
+  "type": "tradeoffer",  // Callback type，Default tradeoffer refers to the quotation
+  "action": "update", // Message type, default update, refers to the quotation status update
   "body": {
     "uid": "xxxxxxxxxxxxx",
     "their_items": [
       {
-        "appid": 570, // 饰品的appid
-        "contextid": "2", // 饰品的contextid
-        "assetid": "15680235255", // 饰品的assetid
-        "new_assetid": "15680235256" // 交易成功后，该饰品的新assetid
+        "appid": 570, // skin's appid
+        "contextid": "2", // skin's contextid
+        "assetid": "15680235255", // skin's assetid
+        "new_assetid": "15680235256" // After the successful transaction, the new assetid of the skin
       }
     ],
     "my_items": [
       {
-        "appid": 570, // 饰品的appid
-        "contextid": "2", // 饰品的contextid
-        "assetid": "15680233392" // 饰品的assetid
+        "appid": 570, // skin's appid
+        "contextid": "2", // skin's contextid
+        "assetid": "15680233392" // skin's assetid
       }
     ],
     "updatedAt": "2019-04-15T10:02:38.495Z",
     "createdAt": "2019-04-15T10:02:07.693Z",
-    "trade_no": "3538xxxxxx", // 机器人报价发起成功后得到的steam报价单号
+    "trade_no": "3538xxxxxx", // The steam quotation number obtained after the robot quotation is successfully launched
     "exchanged": true,
-    "state": 1, // 报价单状态；0表示机器人正在排队处理中，1表示报价交易成功，2表示报价已失败(取消报价也是报价失败)，11表示机器人提交报价中，12表示报价发起成功，已经从steam获取到steam报价单号，13表示机器人报价发起完毕，报价单激活中，等待客户接收报价；
-    "offer_state": 3, // 报价单在steam平台状态，状态信息参加上面的报价单Steam平台状态表格
+    "state": 1, // Robot's quotation status；0 means the robot is queued for processing，1 means successful transaction，2 means failed quotation, cancellation of quote is also a quote failure，11 means robot is submitting the quotation，12 means the quotation was successfully launched and the steam quotation number has been obtained from steam，13 means The quotation of the robot is completed, the quotation is activated, and the customer is waiting for the quotation；
+    "offer_state": 3, // The quotation status in Steam, the status information participates in the above quotation Steam Status Form
     "cancel_time": 600000,
     "tradeurl": "https://steamcommunity.com/tradeoffer/new/?partner=81xxxxxx&token=tOxxxxxx",
     "message": "my trade offer",
@@ -244,15 +242,15 @@ POST http://www.yoursite.com/api/tradeoffer/callback/
 }
 ```
 
-回调响应格式
+Callback response format
 ```json
 {
-  "code": 0, // code为0 表示接收回调正常，非0表示接受异常
+  "code": 0, // Code 0 means the callback is normal, and non-0 means the callback is abnormal.
   "body": {},
   "message": "ok"
 }
 ```
-每次报价单status变化时，机器人就会向以上地址发送一次回调；
-你方收到回调后，应该返回如上格式响应包，code为0 表示接收回调正常，非0表示接受异常；
-如果回调响应异常，则机器人会再间隔1分钟、10分钟、1小时分别重发一次；
-如果1小时后仍然返回异常，则机器人不再继续重发；
+Each time the quotation status changes, the robot will send a callback to the above address;
+After you receive the callback, should return the response packet as above. Code 0 means the callback is normal, and non-0 means the callback is abnormal.
+If the callback response is abnormal, the robot will resend it once after 1 minute, 10 minutes, and 1 hour.
+If the callback response is still abnormal after 1 hour, the robot will not continue to resend;
