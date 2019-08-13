@@ -1,30 +1,29 @@
-## 饰品机器人对接协议
-> 此协议解释权归属[海盗海科技](https://www.haidaoteam.com)所有
+## Steam Skin Trading bot API Agreement
+>The right to interpret this agreement belongs to [HaiDaoHai Technology](https://www.haidaoteam.com)
 
-### 联系我们
-邮箱：Business@haidaoteam.com
-QQ ：304926518
-微信：steamkaifa
+### Contact us
+Email:Business@haidaoteam.com
+QQ:304926518
+Wechat:steamkaifa
 
 
-### 公共参数说明
-饰品机器人对接使用标准的HTTP协议（正式环境使用HTTPS），请求和响应数据包都使用json格式；
-返回的响应包基础格式为:
+### Public parameter description
+The Steam Trading bot API use the standard HTTP protocol (the official environment uses HTTPS), the request and response packets are in json format; the returned response packet base format is:
 ```json
 {
-  "code": 0,  // 错误码，0表示成功，非0表示异常
-  "body": {}, // 具体返回数据
-  "message": "Succeed" // 错误描述
+  "code": 0,  // Error code, 0 means success, non-0 means abnormal
+  "body": {}, // Specific return data
+  "message": "Succeed" // Error description
 }
 ```
 
 
-### 机器人状态查询
+### Steam robot status inquiry
 ```
 GET http://bot.5uskin.com/api/steambot/list/
 ```
 
-接口返回数据结构
+API return data structure
 ```json
 {
   "code": 0,
@@ -32,9 +31,9 @@ GET http://bot.5uskin.com/api/steambot/list/
     "bots": [
       {
         "account": "xxxxx"
-        "steamid": "705xxxxxxxxxx", // 机器人steamid
-        "enable": true,  // 机器人是否启用上线
-        "online": true // 机器人当前是否在线
+        "steamid": "705xxxxxxxxxx", // Botsteamid
+        "enable": true,  // If the bot online switch is open or not
+        "online": true // If the bot is online or not
       }
     ]
   },
@@ -42,19 +41,19 @@ GET http://bot.5uskin.com/api/steambot/list/
 }
 ```
 
-### 控制机器人上下线
+### Control Steam robot on line and off line
 ```
 POST http://bot.5uskin.com/api/steambot/action/
 ```
-接口请求参数包体
+API request parameter inclusions
 ```json
 {
-  "account": "xxxxxxx", // 要操作的机器人帐号
-  "action": "enable" // 机器人的操作指令；当前支持两个指令，"enable": 登录上线，"disable": 注销下线
+  "account": "xxxxxxx", // Current Steam account used by bot
+  "action": "enable" // Operation instructions of the bot; currently supports two instructions, "enable": login, "disable": logout
 }
 ```
 
-接口响应
+API response
 ```json
 {
   "code": 0,
